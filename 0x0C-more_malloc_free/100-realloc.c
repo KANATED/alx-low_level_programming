@@ -1,5 +1,3 @@
-100-realloc.c
-
 #include <stdlib.h>
 #include "main.h"
 
