@@ -1,41 +1,47 @@
-#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include <stdlib.h>
-#include "holberton.h"
-
-/**
- * read_textfile - that reads a text file and prints
- * @filename: variable pointer
- * @letters: size letters
- * Description: Write a function that reads a text file and prints it
- * to the POSIX standard output.
- * Return: the actual number of letters it could read and print, 0 otherwise
- */
 
 ssize_t read_textfile(const char *filename, size_t letters)
 {
-	ssize_t file, let, w;
-	char *text;
+    int fd;
+    ssize_t bytes_read, bytes_written;
+    char *buffer;
 
-	text = malloc(letters);
-	if (text == NULL)
-		return (0);
+    if (filename == NULL)
+        return (0);
 
-	if (filename == NULL)
-		return (0);
+    fd = open(filename, O_RDONLY);
+    if (fd == -1)
+        return (0);
 
-	file = open(filename, O_RDONLY);
+    buffer = malloc(sizeof(char) * (letters + 1));
+    if (buffer == NULL)
+    {
+        close(fd);
+        return (0);
+    }
 
-	if (file == -1)
-	{
-		free(text);
-		return (0);
-	}
+    bytes_read = read(fd, buffer, letters);
+    if (bytes_read == -1)
+    {
+        free(buffer);
+        close(fd);
+        return (0);
+    }
 
-	let = read(file, text, letters);
+    buffer[bytes_read] = '\0';
 
-	w = write(STDOUT_FILENO, text, let);
+    bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
+    if (bytes_written == -1 || bytes_written != bytes_read)
+    {
+        free(buffer);
+        close(fd);
+        return (0);
+    }
 
-	close(file);
+    free(buffer);
+    close(fd);
 
-	return (w);
+    return (bytes_written);
 }
