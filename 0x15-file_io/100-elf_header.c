@@ -6,16 +6,26 @@
 
 #define ERR_EXIT 98
 
+/**
+ * print_error - Prints an error message to stderr and exits with ERR_EXIT status
+ * @msg: The error message to print
+ */
 void print_error(const char *msg)
 {
     dprintf(STDERR_FILENO, "%s\n", msg);
     exit(ERR_EXIT);
 }
 
+/**
+ * print_elf_header - Prints the information contained in the ELF header
+ * @header: Pointer to the ELF header structure
+ */
 void print_elf_header(const Elf64_Ehdr *header)
 {
     int i;
+
     printf("ELF Header:\n");
+
     printf("  Magic:   ");
     for (i = 0; i < EI_NIDENT; i++)
         printf("%02x ", header->e_ident[i]);
@@ -83,6 +93,12 @@ void print_elf_header(const Elf64_Ehdr *header)
     printf("  Entry point address:               0x%lx\n", (unsigned long)header->e_entry);
 }
 
+/**
+ * main - Entry point of the program
+ * @argc: The number of command-line arguments
+ * @argv: Array of command-line arguments
+ * Return: 0 on success, otherwise ERR_EXIT
+ */
 int main(int argc, char *argv[])
 {
     int fd;
